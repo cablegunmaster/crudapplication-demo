@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "system",
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "rootDir": "./src/"
+    //"outFile": "/src/main/resources/static/js/single-file-app.js"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

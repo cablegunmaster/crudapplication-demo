@@ -1,0 +1,29 @@
+{{>header}}
+
+<h1>{{#title}}{{title}}{{/title}}</h1>
+
+<a href="/user/create" title="Create user">Create user</a>
+<table>
+    <tr>
+        <th>id</th>
+        <th>username</th>
+        <th>firstname</th>
+        <th>lastname</th>
+        <th>password</th>
+        <th>edit/delete</th>
+    </tr>
+    {{#userList}}
+    <tr>
+        <td>{{id}}</td>
+        <td>{{username}}</td>
+        <td>{{firstname}}</td>
+        <td>{{lastname}}</td>
+        <td>{{password}}</td>
+        <td><a href="/user/update/{{id}}">update</a>  /
+            <a href="javascript:void(0);" title="Delete user: {{username}}"
+               onclick="httpRequest.deleterequest('/user/delete/{{id}}')">delete</a></td>
+    </tr>
+    {{/userList}}
+</table>
+
+{{>footer}}

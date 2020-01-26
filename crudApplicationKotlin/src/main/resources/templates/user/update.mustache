@@ -1,0 +1,29 @@
+{{>header}}
+
+
+<form method="POST" action="/user/update" id="form">
+    <fieldset>
+        <legend>{{#title}}{{title}}{{/title}}</legend>
+        <input type="hidden" name="id" value="{{userDto.id}}" />
+
+        <input type="text"
+               name="username"
+               placeholder="username"
+               value="{{userDto.username}}"
+               title="username"/>
+        <label for="username">username</label><br/>
+
+        <input type="password" name="password" placeholder="password" title="password"/>
+        <label for="password">Password</label><br/>
+
+        <input type="text" name="firstname" placeholder="firstname"  value="{{userDto.firstname}}" title="first name"/>
+        <label for="firstname">Maiden name</label><br/>
+
+        <input type="text" name="lastname" placeholder="surname"value="{{userDto.lastname}}" title="last name"/>
+        <label for="lastname">Family name</label><br/>
+
+        <input type="submit" name="submit" id="userButton" value="Update User"><br/>
+    </fieldset>
+</form>
+
+{{>footer}}
