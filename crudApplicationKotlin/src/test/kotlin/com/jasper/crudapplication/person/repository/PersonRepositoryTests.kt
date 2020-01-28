@@ -1,7 +1,5 @@
 package com.jasper.crudapplication.person.repository
 
-
-
 import com.jasper.crudapplication.person.model.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,7 +14,7 @@ class PersonRepositoryTests @Autowired constructor(
 
     @Test
     fun `When findByLogin then return Person`() {
-        val person = Person("password","Jasper",
+        val person = Person("password", "Jasper",
                 "Lankhorst",
                 "ok",
                 "description",

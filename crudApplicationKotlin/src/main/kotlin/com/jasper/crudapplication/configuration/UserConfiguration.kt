@@ -1,8 +1,8 @@
 package com.jasper.crudapplication.configuration
 
-import com.jasper.crudapplication.sha256
 import com.jasper.crudapplication.person.model.Person
 import com.jasper.crudapplication.person.repository.PersonRepository
+import com.jasper.crudapplication.sha256
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationRunner
@@ -27,7 +27,7 @@ class UserConfiguration {
 
         //add basic data, on every startup.
         try {
-            userRepository.save(Person("test".sha256(), "smaldini", "Stéphane", "Maldini"))
+            userRepository.save(Person("test56777".sha256(), "smaldini", "Stéphane", "Maldini"))
         } catch (ex: DataIntegrityViolationException) {
             LOG.debug("Primary key is already inserted {} ", ex);
         }
