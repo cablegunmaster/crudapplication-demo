@@ -28,7 +28,6 @@ class PersonController(private val personRepository: PersonRepository) {
     @PostMapping("/create", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createUser(@RequestBody person: Person): Person {
         if (!person.username.isEmpty()) {
-            person.password = person.password.sha256();
             personRepository.save(person);
         } else {
             throw ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Expected username, no username found")

@@ -24,11 +24,3 @@ class Person(
             field = if(value.length > 6) value.sha256() else throw IllegalArgumentException("Password is too small")
         }
 }
-
-// New data class for incoming user
-data class NewUserDTO @JsonCreator constructor(
-        val username: String = "",
-        val password: String = "",
-        var firstname: String = "",
-        var lastname: String = ""
-)
