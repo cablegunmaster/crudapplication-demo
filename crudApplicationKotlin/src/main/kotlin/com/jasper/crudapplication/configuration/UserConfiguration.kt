@@ -1,8 +1,8 @@
 package com.jasper.crudapplication.configuration
 
-import com.jasper.crudapplication.user.model.User
-import com.jasper.crudapplication.user.model.sha256
-import com.jasper.crudapplication.user.repository.UserRepository
+import com.jasper.crudapplication.sha256
+import com.jasper.crudapplication.person.model.Person
+import com.jasper.crudapplication.person.repository.PersonRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationRunner
@@ -23,12 +23,12 @@ class UserConfiguration {
      * Basically replace this with liquibase in the future?
      */
     @Bean
-    fun databaseInitializer(userRepository: UserRepository) = ApplicationRunner {
+    fun databaseInitializer(userRepository: PersonRepository) = ApplicationRunner {
 
         //add basic data, on every startup.
         try {
-            userRepository.save(User("test".sha256(), "smaldini", "Stéphane", "Maldini"))
-        }catch (ex : DataIntegrityViolationException){
+            userRepository.save(Person("test".sha256(), "smaldini", "Stéphane", "Maldini"))
+        } catch (ex: DataIntegrityViolationException) {
             LOG.debug("Primary key is already inserted {} ", ex);
         }
     }

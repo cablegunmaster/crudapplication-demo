@@ -1,7 +1,6 @@
 package com.jasper.crudapplication.controller
 
-import com.jasper.crudapplication.user.model.NewUserDTO
-import com.jasper.crudapplication.user.model.User
+import com.jasper.crudapplication.person.model.Person
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("/user")
-class HtmlController(var userController: UserController) {
+class HtmlController(var userController: PersonController) {
 
     @GetMapping("/")
     fun someCrudController(model: Model): String {
@@ -24,8 +23,8 @@ class HtmlController(var userController: UserController) {
     }
 
     @PostMapping("/create", consumes = ["application/json"])
-    fun createPostUser(model: Model, @RequestBody newUser: User) {
-        userController.createUser(newUser)
+    fun createPostUser(model: Model, @RequestBody person: Person) {
+        userController.createUser(person)
     }
 
     @GetMapping("/list")
