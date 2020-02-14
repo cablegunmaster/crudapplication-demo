@@ -2,10 +2,7 @@ package com.jasper.crudapplication.person.model
 
 import com.jasper.crudapplication.sha256
 import java.io.Serializable
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 
 @Entity
@@ -15,7 +12,7 @@ class Person(
         var firstname: String = "",
         var lastname: String = "",
         var description: String? = null,
-        @Id @GeneratedValue var id: Long? = null) : Serializable {
+        @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long? = null) : Serializable {
 
     var password: String = pwd
         //Custom Setter

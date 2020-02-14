@@ -14,7 +14,7 @@ class CrudApplicationKotlinApplicationTests @Autowired constructor(
         val personRepository: PersonRepository) {
 
     @Test
-    fun givenPerson_whenSaved_thenFound() {
+    fun`when a person is saved its the same person`() {
         val personToSave = Person("5000", "John")
         entityManager.persistAndFlush(personToSave)
         val personFound = personRepository.findByUsername(personToSave.username)

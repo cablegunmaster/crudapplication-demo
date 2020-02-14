@@ -1,6 +1,5 @@
 package com.jasper.crudapplication.controller
 
-import com.jasper.crudapplication.sha256
 import com.jasper.crudapplication.person.model.Person
 import com.jasper.crudapplication.person.repository.PersonRepository
 import org.springframework.http.HttpStatus
@@ -18,11 +17,10 @@ class PersonController(private val personRepository: PersonRepository) {
     fun findAll() = personRepository.findAll()
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long) = personRepository.findById(id).get();
+    fun findById(@PathVariable id: Long) = personRepository.findById(id).get()
 
     @GetMapping("/login/{username}")
-    fun findByUsername(@PathVariable username: String) =
-            personRepository.findByUsername(username)
+    fun findByUsername(@PathVariable username: String) = personRepository.findByUsername(username)
                     ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "This person does not exist")
 
     @PostMapping("/create", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -35,7 +33,7 @@ class PersonController(private val personRepository: PersonRepository) {
         return person;
     }
 
-    @PostMapping("/update")
+    @PatchMapping("/update")
     fun updateUser(@RequestBody person: Person): Person {
         if (person.id != null) {
             val personOptional: Optional<Person> = personRepository.findById(person.id!!)
