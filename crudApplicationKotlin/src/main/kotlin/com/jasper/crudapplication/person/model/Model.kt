@@ -9,8 +9,8 @@ import javax.persistence.*
 class Person(
         pwd: String = "",
         @Column(unique = true) var username: String = "",
-        var firstname: String = "",
-        var lastname: String = "",
+        var firstName: String = "",
+        var lastName: String = "",
         var description: String? = null,
         @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long? = null) : Serializable {
 

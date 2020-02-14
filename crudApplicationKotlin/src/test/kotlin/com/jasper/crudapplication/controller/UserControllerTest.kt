@@ -87,7 +87,7 @@ class UserControllerTest() {
                 "9a512706b709101c8924bbac477670d76aee49d26648420897e7f3f6f9cabe96".equals(jsonObject.get("password")))
         Assertions.assertThat(null == jsonObject.get("description"))
         Assertions.assertThat("id" == jsonObject.get("id"))
-        Assertions.assertThat("smaldini" == jsonObject.get("username"))
-        Assertions.assertThat("Maldini" == jsonObject.get("lastname"))
+        Assertions.assertThat("smaldini" == jsonObject.get("userName"))
+        Assertions.assertThat("Maldini" == jsonObject.get("lastName"))
     }
 }
