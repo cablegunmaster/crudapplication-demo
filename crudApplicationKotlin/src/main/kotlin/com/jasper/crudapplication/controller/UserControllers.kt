@@ -45,12 +45,10 @@ class PersonController(private val personRepository: PersonRepository) {
     }
 
     @DeleteMapping("/delete/{id}")
-    fun deleteUser(@PathVariable id: Long): String {
+    fun deleteUser(@PathVariable id: Long) {
         val personOptional: Optional<Person> = personRepository.findById(id)
         if (personOptional.isPresent) {
             personRepository.delete(personOptional.get())
-            return "Succesfully deleted user with username : " + personOptional.get().username
         }
-        throw ResponseStatusException(HttpStatus.NOT_FOUND, "This person does not exist")
     }
 }

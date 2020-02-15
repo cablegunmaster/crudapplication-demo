@@ -15,6 +15,9 @@ import java.net.http.HttpResponse
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest() {
 
+    //use only own created resources in the test.
+    var userId : Int?=null
+
     @LocalServerPort
     var port: Int? = null
 
@@ -47,7 +50,7 @@ class UserControllerTest() {
     }
 
     @Test
-    fun `check if invalid ID requested gives back a not found page`() {
+    fun `check if invalid ID requested gives back a 404 page`() {
         val client = HttpClient.newBuilder().build();
         val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + port + "/api/user/2"))
@@ -89,5 +92,19 @@ class UserControllerTest() {
         Assertions.assertThat("id" == jsonObject.get("id"))
         Assertions.assertThat("smaldini" == jsonObject.get("userName"))
         Assertions.assertThat("Maldini" == jsonObject.get("lastName"))
+    }
+
+    @Test
+    fun `create and delete user succesfully from userCrud`(){
+
+        //Todo create a new user.
+        val client = HttpClient.newBuilder().build();
+        val request = HttpRequest.newBuilder()
+                .DELETE()
+                .uri(URI.create("http://localhost:" + port + "/api/user/delete/2"))
+                .build();
+
+        val response = client.send(request,HttpResponse.BodyHandlers.ofString())
+        Assertions.assertThat(response.statusCode() == 204)
     }
 }
