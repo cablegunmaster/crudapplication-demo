@@ -1,110 +1,137 @@
 package com.jasper.crudapplication.controller
 
-import org.assertj.core.api.Assertions
+import com.jasper.crudapplication.JsonBuilder
+import com.jasper.crudapplication.httpUtil.httpSendDelete
+import com.jasper.crudapplication.httpUtil.httpSendGET
+import com.jasper.crudapplication.httpUtil.httpSendPost
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 
 //JDK 11 httpclient.building.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest() {
 
-    //use only own created resources in the test.
-    var userId : Int?=null
-
     @LocalServerPort
-    var port: Int? = null
+    var port : Int = 0;
+    var baseUrl: String = "http://localhost";
 
     @Test
     fun `check endpoint retrieve userList returns a list of persons resource`() {
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/api/user/"))
-                .build();
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        val jsonObject: JSONObject = JSONArray(response.body()).get(0) as JSONObject
+        val response = httpSendGET(baseUrl + ":"+port+"/api/user/")
+        val jsonObject: JSONObject = JSONArray(response?.body()).get(0) as JSONObject
 
-        Assertions.assertThat(response.statusCode() == 200)
-        Assertions.assertThat(response.body().length == 1)
-        checkSingleLineFromUserConfiguration(jsonObject)
+        assert(response?.statusCode() == 200)
+        assert(jsonObject.length() == 6)
+        checkSingleUserConfiguration(jsonObject)
     }
 
     @Test
     fun `check filter resources of user ID = 1 is given back a correct response`() {
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/api/user/1"))
-                .build();
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        val jsonObject = JSONObject(response.body())
+        val response = httpSendGET(baseUrl + ":"+port+"/api/user/1")
+        val jsonObject = JSONObject(response?.body())
 
-        Assertions.assertThat(response.statusCode() == 200)
-        Assertions.assertThat(response.body().length == 1)
-        checkSingleLineFromUserConfiguration(jsonObject)
+        assert(response?.statusCode() == 200)
+        assert(jsonObject.length() == 6)
+        checkSingleUserConfiguration(jsonObject)
     }
 
     @Test
     fun `check if invalid ID requested gives back a 404 page`() {
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/api/user/2"))
-                .build();
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        Assertions.assertThat(response.statusCode() == 404)
-        Assertions.assertThat(response.body().isEmpty())
+        val response = httpSendGET(baseUrl + ":"+port+"/api/user/245675457")
+        if(response != null) {
+            assert(response.statusCode() == 404)
+        }
     }
 
     @Test
     fun `check if password is retrieved by username gets correct password`() {
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/api/user/login/smaldini"))
-                .build();
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        val jsonObject = JSONObject(response.body())
-        Assertions.assertThat(response.statusCode() == 200)
-        Assertions.assertThat(
+        val response = httpSendGET(baseUrl + ":"+port+"/api/user/login/smaldini")
+        val jsonObject = JSONObject(response?.body())
+        assert(response?.statusCode() == 200)
+        assert(
                 "9a512706b709101c8924bbac477670d76aee49d26648420897e7f3f6f9cabe96".equals(jsonObject.get("password")))
     }
 
     @Test
     fun `check if password is retrieved by invalid username returns 404`() {
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/api/user/login/uioyhiouygoouygu"))
-                .build();
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        Assertions.assertThat(response.statusCode() == 404)
-    }
-
-    fun checkSingleLineFromUserConfiguration(jsonObject: JSONObject) {
-        Assertions.assertThat("Stéphane" == jsonObject.get("firstname"))
-        Assertions.assertThat(
-                "9a512706b709101c8924bbac477670d76aee49d26648420897e7f3f6f9cabe96".equals(jsonObject.get("password")))
-        Assertions.assertThat(null == jsonObject.get("description"))
-        Assertions.assertThat("id" == jsonObject.get("id"))
-        Assertions.assertThat("smaldini" == jsonObject.get("userName"))
-        Assertions.assertThat("Maldini" == jsonObject.get("lastName"))
+        val response = httpSendGET(baseUrl + ":"+port+"/api/user/login/uioyhiouygoouygu")
+        assert(response?.statusCode() == 404)
     }
 
     @Test
-    fun `create and delete user succesfully from userCrud`(){
+    fun `check create user with invalid data is not allowed`() {
+        val userToCreate = JsonBuilder(
+                "firstName" to "test56879",
+                "lastName" to "iriene",
+                "description" to "the one who just needed a nickname",
+                "pwd" to "1234567"
+        ).toString()
 
-        //Todo create a new user.
-        val client = HttpClient.newBuilder().build();
-        val request = HttpRequest.newBuilder()
-                .DELETE()
-                .uri(URI.create("http://localhost:" + port + "/api/user/delete/2"))
-                .build();
+        val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
+        if(response != null) {
+            assert(response.statusCode().equals(417))
+        }else{
+            assert(false)
+        }
+    }
 
-        val response = client.send(request,HttpResponse.BodyHandlers.ofString())
-        Assertions.assertThat(response.statusCode() == 204)
+    @Test
+    fun `check create user with full valid data is correct`() {
+        val userToCreate = JsonBuilder(
+                "firstName" to "henk",
+                "lastName" to "schouten",
+                "description" to "the one who just needed a nickname",
+                "pwd" to "1234567",
+                "username" to "Henkie"
+        ).toString()
+
+        val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
+        if(response != null) {
+            assert(response.statusCode().equals(201))
+        }
+    }
+
+    @Test
+    fun `check create and delete user is successful by using user CRUD`() {
+        val userToCreate = JsonBuilder(
+                "firstName" to "create1",
+                "lastName" to "create1",
+                "description" to "the one who just needed a nickname",
+                "pwd" to "1234567",
+                "username" to "Henkie5786"
+        ).toString()
+
+       // val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
+//        if(response != null) {
+//            assert(response.statusCode().equals(201))
+//        }
+        val number: Int = 0;
+
+        val response = httpSendDelete(baseUrl + ":"+port+ "/api/user/delete/" + number)
+        val response404 = httpSendGET(baseUrl + ":"+port+ "/api/user/" + number)
+        assert(response?.statusCode() == 204)
+    }
+
+    fun checkSingleUserConfiguration(jsonObject: JSONObject) {
+        assert("Stéphane" == jsonObject.get("firstName"))
+        assert(
+                "9a512706b709101c8924bbac477670d76aee49d26648420897e7f3f6f9cabe96".equals(jsonObject.get("password")))
+        assert(jsonObject.get("description").equals(null))
+        assert(1 == jsonObject.get("id"))
+        assert("smaldini" == jsonObject.get("username"))
+        assert("Maldini" == jsonObject.get("lastName"))
+    }
+
+    fun checkUserConfigurationByAllConfiguration(jsonObject: JSONObject) {
+        assert("Stéphane" == jsonObject.get("firstName"))
+        assert(
+                "9a512706b709101c8924bbac477670d76aee49d26648420897e7f3f6f9cabe96".equals(jsonObject.get("password")))
+        assert(null == jsonObject.get("description"))
+        assert("id" == jsonObject.get("id"))
+        assert("smaldini" == jsonObject.get("username"))
+        assert("Maldini" == jsonObject.get("lastName"))
     }
 }

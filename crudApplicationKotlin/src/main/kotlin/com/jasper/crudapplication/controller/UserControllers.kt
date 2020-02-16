@@ -17,16 +17,24 @@ class PersonController(private val personRepository: PersonRepository) {
     fun findAll() = personRepository.findAll()
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: Long) = personRepository.findById(id).get()
+    fun findById(@PathVariable id: Long): Person {
+        val optional = personRepository.findById(id)
+        if(optional.isPresent){
+            return optional.get();
+        }
+        throw ResponseStatusException(HttpStatus.NOT_FOUND, "This person does not exist")
+    }
 
     @GetMapping("/login/{username}")
     fun findByUsername(@PathVariable username: String) = personRepository.findByUsername(username)
                     ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "This person does not exist")
 
     @PostMapping("/create", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseStatus(HttpStatus.CREATED)
     fun createUser(@RequestBody person: Person): Person {
         if (!person.username.isEmpty()) {
             personRepository.save(person);
+
         } else {
             throw ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Expected username, no username found")
         }
