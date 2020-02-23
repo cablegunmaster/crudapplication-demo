@@ -53,6 +53,7 @@ class PersonController(private val personRepository: PersonRepository) {
     }
 
     @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteUser(@PathVariable id: Long) {
         val personOptional: Optional<Person> = personRepository.findById(id)
         if (personOptional.isPresent) {

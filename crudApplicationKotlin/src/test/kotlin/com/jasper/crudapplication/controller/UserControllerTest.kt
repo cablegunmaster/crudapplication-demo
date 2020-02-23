@@ -15,12 +15,12 @@ import org.springframework.boot.web.server.LocalServerPort
 class UserControllerTest() {
 
     @LocalServerPort
-    var port : Int = 0;
+    var port: Int = 0;
     var baseUrl: String = "http://localhost";
 
     @Test
     fun `check endpoint retrieve userList returns a list of persons resource`() {
-        val response = httpSendGET(baseUrl + ":"+port+"/api/user/")
+        val response = httpSendGET(baseUrl + ":" + port + "/api/user/")
         val jsonObject: JSONObject = JSONArray(response?.body()).get(0) as JSONObject
 
         assert(response?.statusCode() == 200)
@@ -30,7 +30,7 @@ class UserControllerTest() {
 
     @Test
     fun `check filter resources of user ID = 1 is given back a correct response`() {
-        val response = httpSendGET(baseUrl + ":"+port+"/api/user/1")
+        val response = httpSendGET(baseUrl + ":" + port + "/api/user/1")
         val jsonObject = JSONObject(response?.body())
 
         assert(response?.statusCode() == 200)
@@ -40,15 +40,15 @@ class UserControllerTest() {
 
     @Test
     fun `check if invalid ID requested gives back a 404 page`() {
-        val response = httpSendGET(baseUrl + ":"+port+"/api/user/245675457")
-        if(response != null) {
+        val response = httpSendGET(baseUrl + ":" + port + "/api/user/245675457")
+        if (response != null) {
             assert(response.statusCode() == 404)
         }
     }
 
     @Test
     fun `check if password is retrieved by username gets correct password`() {
-        val response = httpSendGET(baseUrl + ":"+port+"/api/user/login/smaldini")
+        val response = httpSendGET(baseUrl + ":" + port + "/api/user/login/smaldini")
         val jsonObject = JSONObject(response?.body())
         assert(response?.statusCode() == 200)
         assert(
@@ -57,7 +57,7 @@ class UserControllerTest() {
 
     @Test
     fun `check if password is retrieved by invalid username returns 404`() {
-        val response = httpSendGET(baseUrl + ":"+port+"/api/user/login/uioyhiouygoouygu")
+        val response = httpSendGET(baseUrl + ":" + port + "/api/user/login/uioyhiouygoouygu")
         assert(response?.statusCode() == 404)
     }
 
@@ -70,10 +70,10 @@ class UserControllerTest() {
                 "pwd" to "1234567"
         ).toString()
 
-        val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
-        if(response != null) {
+        val response = httpSendPost(baseUrl + ":" + port + "/api/user/create", userToCreate)
+        if (response != null) {
             assert(response.statusCode().equals(417))
-        }else{
+        } else {
             assert(false)
         }
     }
@@ -88,8 +88,8 @@ class UserControllerTest() {
                 "username" to "Henkie"
         ).toString()
 
-        val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
-        if(response != null) {
+        val response = httpSendPost(baseUrl + ":" + port + "/api/user/create", userToCreate)
+        if (response != null) {
             assert(response.statusCode().equals(201))
         }
     }
@@ -104,15 +104,21 @@ class UserControllerTest() {
                 "username" to "Henkie5786"
         ).toString()
 
-       // val response = httpSendPost(baseUrl + ":"+port+ "/api/user/create", userToCreate)
-//        if(response != null) {
-//            assert(response.statusCode().equals(201))
-//        }
-        val number: Int = 0;
+        val responseCreate = httpSendPost(baseUrl + ":" + port + "/api/user/create", userToCreate)
+        if (responseCreate != null) {
+            assert(responseCreate.statusCode().equals(201))
 
-        val response = httpSendDelete(baseUrl + ":"+port+ "/api/user/delete/" + number)
-        val response404 = httpSendGET(baseUrl + ":"+port+ "/api/user/" + number)
-        assert(response?.statusCode() == 204)
+            val jsonObject = JSONObject(responseCreate?.body())
+            assert(jsonObject.get("id") != null)
+            val IdNumber: Int = jsonObject.get("id") as Int
+
+            val response = httpSendDelete(baseUrl + ":" + port + "/api/user/delete/" + IdNumber)
+            val response404 = httpSendGET(baseUrl + ":" + port + "/api/user/" + IdNumber)
+            if (response != null && response404 != null) {
+                assert(response.statusCode() == 204)
+                assert(response404.statusCode() == 404)
+            }
+        }
     }
 
     fun checkSingleUserConfiguration(jsonObject: JSONObject) {
